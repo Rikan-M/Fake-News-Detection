@@ -10,20 +10,17 @@ import numpy as np
 import pandas as pd
 import os,sys
 
-
-class DataTransformationConfig:
-    def __init__(self):
-        try:
-            transform_dir_path:str=os.path.join(training_pipeline.ARTIFACT_DIR_NAME,training_pipeline.TRANSFORMED_DATASET_DIR_NAME)
-            train_transformed_file_path:str=os.path.join(transform_dir_path,training_pipeline.TRAIN_FILE_NAME)
-            test_transformed_file_path:str=os.path.join(transform_dir_path,training_pipeline.TEST_FILE_NAME)
-            preprocessor_file_path:str=os.path.join(
-                training_pipeline.ARTIFACT_DIR_NAME,
-                training_pipeline.PICKLE_DIR_NAME,
-                training_pipeline.PREPROCESSOR_FILE_NAME
-            )
-        except Exception as e:
-            raise CustomException(e,sys)
+@dataclass
+class DataTransformationConfig:      
+    transform_dir_path:str=os.path.join(training_pipeline.ARTIFACT_DIR_NAME,training_pipeline.TRANSFORMED_DATASET_DIR_NAME)
+    train_transformed_file_path:str=os.path.join(transform_dir_path,training_pipeline.TRAIN_FILE_NAME)
+    test_transformed_file_path:str=os.path.join(transform_dir_path,training_pipeline.TEST_FILE_NAME)
+    preprocessor_file_path:str=os.path.join(
+        training_pipeline.ARTIFACT_DIR_NAME,
+        training_pipeline.PICKLE_DIR_NAME,
+        training_pipeline.PREPROCESSOR_FILE_NAME
+    )
+        
 
 @dataclass
 class DataTransformationArtifact:

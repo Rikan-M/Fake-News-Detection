@@ -8,34 +8,30 @@ import pandas as pd
 import os,sys
 
 
-
+@dataclass
 class DataIngestionConfig:
-    def __init__(self):
-        try:
-            train_test_split_ratio:float=training_pipeline.TRAIN_TEST_SPLIT_RATIO
-            fake_dataset_file_path:str=training_pipeline.FAKE_DATASET_PATH
-            true_dataset_file_path:str=training_pipeline.TRUE_DATASET_PATH
-            dataset_dir_path:str=os.path.join(
-                training_pipeline.ARTIFACT_DIR_NAME,
-                training_pipeline.DATASET_DIR_NAME
-            )
-            total_set_file_path:str=os.path.join(
-                dataset_dir_path,
-                training_pipeline.FULL_DATASET_DIR_NAME,
-                training_pipeline.TOTAL_DATASET_FILE_NAME
-            )
-            train_set_file_path:str=os.path.join(
-                dataset_dir_path,
-                training_pipeline.TRAIN_TEST_DATASET_DIR_NAME,
-                training_pipeline.TRAIN_FILE_NAME
-            )
-            test_set_file_path:str=os.path.join(
-                dataset_dir_path,
-                training_pipeline.TRAIN_TEST_DATASET_DIR_NAME,
-                training_pipeline.TEST_FILE_NAME
-            )
-        except Exception as e:
-            raise CustomException(e,sys)
+    train_test_split_ratio:float=training_pipeline.TRAIN_TEST_SPLIT_RATIO
+    fake_dataset_file_path:str=training_pipeline.FAKE_DATASET_PATH
+    true_dataset_file_path:str=training_pipeline.TRUE_DATASET_PATH
+    dataset_dir_path:str=os.path.join(
+        training_pipeline.ARTIFACT_DIR_NAME,
+        training_pipeline.DATASET_DIR_NAME
+    )
+    total_set_file_path:str=os.path.join(
+        dataset_dir_path,
+        training_pipeline.FULL_DATASET_DIR_NAME,
+        training_pipeline.TOTAL_DATASET_FILE_NAME
+    )
+    train_set_file_path:str=os.path.join(
+        dataset_dir_path,
+        training_pipeline.TRAIN_TEST_DATASET_DIR_NAME,
+        training_pipeline.TRAIN_FILE_NAME
+    )
+    test_set_file_path:str=os.path.join(
+        dataset_dir_path,
+        training_pipeline.TRAIN_TEST_DATASET_DIR_NAME,
+        training_pipeline.TEST_FILE_NAME
+    )
 
 
 @dataclass
