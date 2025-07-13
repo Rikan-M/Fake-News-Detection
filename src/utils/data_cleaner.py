@@ -90,7 +90,7 @@ class DataCleaner:
 
             return_df=pd.DataFrame(vect_arr)
             return_df["year"]=dataset.year
-            return_df["IsFake"]=dataset.IsFake
+            return_df["isFake"]=dataset.isFake
 
             return return_df
         except Exception as e:

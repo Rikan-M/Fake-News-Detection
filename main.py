@@ -3,10 +3,7 @@ from src.exception.exception import CustomException
 from src.components.data_transformation import (DataTransformation,DataTransformationConfig,DataTransformationArtifact)
 from src.constent import training_pipeline
 
-
 import sys
-
-
 
 if __name__=='__main__':
     try:
