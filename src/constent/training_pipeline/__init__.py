@@ -1,5 +1,7 @@
 import os
 
+TARGET_COLUMN:str="isFake"
+
 FAKE_DATASET_PATH:str='notebook\Fake.csv'
 TRUE_DATASET_PATH:str='notebook\True.csv'
 
@@ -19,7 +21,7 @@ FULL_DATASET_DIR_NAME='total_dataset'
 TRAIN_TEST_DATASET_DIR_NAME='train_test_dataset'
 
 PICKLE_DIR_NAME='pickle_data'
-MODEL_DIR_NAME='model'
+MODEL_FILE_NAME='model.pkl'
 PREPROCESSOR_FILE_NAME='preprocessor.pkl'
 
 TRANSFORMED_DATASET_DIR_NAME='transformed'

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from src.exception.exception import CustomException
 from src.logging.logger import logging
 from src.constent import training_pipeline
+from src.constent.training_pipeline import TARGET_COLUMN
 from src.utils.fiel_handler import save_csv_files
 from sklearn.model_selection import train_test_split
 import pandas as pd
@@ -51,8 +52,8 @@ class DataIngestion:
             logging.info("Importing true and fake df")
             fake_df=pd.read_csv(fake_file_path)
             true_df=pd.read_csv(true_file_path)
-            fake_df['isFake']=1
-            true_df['isFake']=0
+            fake_df[TARGET_COLUMN]=1
+            true_df[TARGET_COLUMN]=0
             logging.info("Combining true and fake df into one single df")
             df=pd.concat((fake_df,true_df),axis=0)
             df.drop("subject",axis=1,inplace=True)

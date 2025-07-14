@@ -1,5 +1,8 @@
 from src.logging.logger import logging
 from src.exception.exception import CustomException
+from src.constent.training_pipeline import TARGET_COLUMN
+
+
 from typing import List
 
 import pandas as pd
@@ -25,6 +28,7 @@ class DataCleaner:
             logging.info("Stopwords loaded")
         except Exception as e:
             logging.info("Failed to load stopwords")
+            raise CustomException(e,sys)
     def concat_text_title_in_dataframes(self,dataframe:pd.DataFrame)->pd.DataFrame:
         try:
             logging.info("Title-Text concatination")
@@ -90,7 +94,7 @@ class DataCleaner:
 
             return_df=pd.DataFrame(vect_arr)
             return_df["year"]=dataset.year
-            return_df["isFake"]=dataset.isFake
+            return_df[TARGET_COLUMN]=dataset[TARGET_COLUMN]
 
             return return_df
         except Exception as e:
