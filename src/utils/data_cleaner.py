@@ -33,8 +33,7 @@ class DataCleaner:
         try:
             logging.info("Title-Text concatination")
             dataframe["title_text"]=dataframe.title+' '+dataframe.text
-            dataframe.drop("title",axis=1,inplace=True)
-            dataframe.drop("text",axis=1,inplace=True)
+            dataframe.drop(["title","text"],axis=1,inplace=True)
             return dataframe
         except Exception as e:
             raise CustomException(e,sys)
@@ -81,7 +80,7 @@ class DataCleaner:
             raise CustomException(e,sys)
         
 
-    def initiate_data_cleaning(self,dataset:pd.DataFrame)->pd.DataFrame:
+    def initiate_data_cleaning(self,dataset:pd.DataFrame,is_train_data:bool=True)->pd.DataFrame:
         try:
             dataset=self.concat_text_title_in_dataframes(dataframe=dataset)
             dataset=self.date_extraction(dataframe=dataset)
@@ -94,7 +93,13 @@ class DataCleaner:
 
             return_df=pd.DataFrame(vect_arr)
             return_df["year"]=dataset.year
-            return_df[TARGET_COLUMN]=dataset[TARGET_COLUMN]
+            if is_train_data:
+                
+                """So we are going to use this class in our prediction. but in prediction we will not get the target column in the dataset
+                so through is_train_data we just check if it is training data/test data or a data from a user. if it is from user then we can
+                ignore the target column
+                """
+                return_df[TARGET_COLUMN]=dataset[TARGET_COLUMN]
 
             return return_df
         except Exception as e:

@@ -4,14 +4,14 @@ from src.components.data_transformation import DataTransformationArtifact
 from src.utils.fiel_handler import save_object,load_object
 from src.constent import training_pipeline
 from src.constent.training_pipeline import TARGET_COLUMN
-
+from src.pipeline.prediction_pipeline import PredictPipeline
 from sklearn.ensemble import RandomForestClassifier,AdaBoostClassifier,GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
-
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import f1_score,precision_score,recall_score
 
 from sklearn.metrics import accuracy_score
 
@@ -23,14 +23,19 @@ import os,sys
 
 @dataclass
 class ModelTrainerConfig:
-    pickle_dir_path:str=os.path.join(
-        training_pipeline.ARTIFACT_DIR_NAME,
-        training_pipeline.PICKLE_DIR_NAME
-                                 )
-    model_file_path:str=os.path.join(
-        pickle_dir_path,
-        training_pipeline.MODEL_FILE_NAME
-    )
+    prediction_model_path=training_pipeline.PREDICTION_MODEL_PATH
+
+@dataclass
+class ClassificationMetrics:
+    f1_score:float
+    precision_score:float
+    recall_score:float
+
+@dataclass
+class ModelTrainerArtifact:
+    predict_model_file_path:str
+    train_classification_metric:ClassificationMetrics
+    test_classification_metric:ClassificationMetrics
 
 
 class ModelTrainer:
@@ -80,21 +85,37 @@ class ModelTrainer:
 
         best_model_name=list(model_report.keys())[list(model_report.values()).index(best_model_score)]
         best_model=models[best_model_name]
-        return (best_model,best_model_name,best_model_score)
+        return best_model
+    def get_scores(self,model,X,y)->ClassificationMetrics:
+        try:
+            y_hat=model.predict(X)
+            model_f1=f1_score(y,y_hat)
+            model_precision=precision_score(y,y_hat)
+            model_recall=recall_score(y,y_hat)
+            return ClassificationMetrics(f1_score=model_f1,precision_score=model_precision,recall_score=model_recall)
+        except Exception as e:
+            raise CustomException(e,sys)
     def initiate_model_trainer(self):
         try:
             logging.info("Read transformed csv files")
             train_input_features,train_target_feature=self.data_devider(self.data_transformation_artifact.train_transformed_file_path)
             test_input_features,test_target_feature=self.data_devider(self.data_transformation_artifact.test_transformed_file_path)
             logging.info("Running model selector")
-            model,name,score=self.model_selector(x_train=train_input_features,
+            model=self.model_selector(x_train=train_input_features,
                                       y_train=train_target_feature,
                                       x_test=test_input_features,
                                       y_test=test_target_feature)
             model.fit(train_input_features,train_target_feature)
-            save_object(file_path=self.model_trainer_config.model_file_path,obj=model)
+            preprocessor=load_object(self.data_transformation_artifact.preprocessor_file_path)
+            prediction_pipeline=PredictPipeline(preprocessor=preprocessor,model=model)
 
-            return (name,score)
-        
+            save_object(file_path=self.model_trainer_config.prediction_model_path,obj=prediction_pipeline)
+
+            train_classification_metrics=self.get_scores(model=model,X=train_input_features,y=train_target_feature)
+            test_classification_metrics=self.get_scores(model=model,X=test_input_features,y=test_target_feature)
+
+            return ModelTrainerArtifact(predict_model_file_path=self.model_trainer_config.prediction_model_path,
+                                        train_classification_metric=train_classification_metrics,
+                                        test_classification_metric=test_classification_metrics)
         except Exception as e:
             raise CustomException(e,sys)
